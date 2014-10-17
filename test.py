@@ -1,11 +1,14 @@
 #! /usr/bin/python3
 
 import csv, sys
-filename = "input.csv"
+import xlrd
+import xlsxwriter
 
-def truc(liste, ind, mot):
-    
-    print("liste :", liste[ind], "mot :", mot[0])
+filename_in = "input.xlsx"
+filename_out = "output.xlsx"
+
+def truc(liste, ind, mot):    
+    #print("liste :", liste[ind], "mot :", mot[0])
     
     if "Total " in liste[ind]:
         mot[0] = ""
@@ -19,18 +22,6 @@ def truc(liste, ind, mot):
         else:
             mot[0] = liste[ind]
 
-liste = []
-
-with open(filename, newline='') as f:
-    reader = csv.reader(f, delimiter=';')
-
-    listel = []
-    
-    for l in reader:
-        print(type(l))
-        print(l)
-        listel.append(l)
-        
 # commence apres la premiere ligne ou il y a qqchose
 # pour toute les lignes
     # prend mot colonne
@@ -39,61 +30,49 @@ with open(filename, newline='') as f:
     # si pas total et re tenue vide récupe mot
 # enregistrer
 
+wb_in = xlrd.open_workbook(filename_in)
+wb_out = xlsxwriter.Workbook(filename_out)
+sheet_names = wb_in.sheet_names()
+print("liste des feuilles :", sheet_names)
 
+for sheet_name in sheet_names:
+    liste = []
+    # extract information from the excel file
+    ws_in = wb_in.sheet_by_name(sheet_name)
+
+    listel = []
+    for cur_row in range(ws_in.nrows):
+        listel.append([])
+        for cur_col in range(ws_in.ncols):
+            listel[cur_row].append(ws_in.cell_value(cur_row, cur_col))
+
+    # Take out the rows without anything in the first column.
     for l in range(len(listel)):
         if len(listel[l][0]) != 0:
-            print("debut :", l)
             liste = listel[l:]
             break
+               
+    mot_b = [""]
+    mot_d = [""]
+    mot_c = [""]
+    mot_e = [""]
 
-
-mot_b = [""]
-mot_d = [""]
-mot_c = [""]
-mot_e = [""]
-
-"""
-print("-----------------")         
-for l in liste:
-    print(l)
-print("-----------------")
-print("algo")
-print("len liste", len(liste))
-print()
-"""
-for l in liste:
-    print(l)
-    truc(l, 1, mot_b) 
-    truc(l, 2, mot_c) 
-    truc(l, 3, mot_d)
-    truc(l, 4, mot_e)
-"""    
-print("-----------------")     
-for l in liste:
-    print(l)
-print("-----------------") 
-    
-    
-print(";".join(liste[0]))
-"""
-    
-with open('output.csv', 'w', newline='') as f:
-    writer = csv.writer(f, delimiter=';')
-    print(csv.list_dialects())
     for l in liste:
-        print(l)        
-        writer.writerow(l)
+        #print(l)
+        truc(l, 1, mot_b) 
+        truc(l, 2, mot_c) 
+        truc(l, 3, mot_d)
+        truc(l, 4, mot_e)
+
+
+
+    ws_out = wb_out.add_worksheet(sheet_name)
+    for row, l in enumerate(liste):  
+        ws_out.write_row(row, 0, l)  
+    
+wb_out.close()
     
 sys.exit()
-    
-    
-print()
-print(liste[5])
-for t in liste[5]:
-    print(type(t))
-    print(t)   
-    if "Total " in t:
-        print("tagada")
-            
+        
             
             
