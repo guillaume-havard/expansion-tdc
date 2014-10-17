@@ -10,7 +10,7 @@ sont utilisé
 Fichier à traiter
 -----------------
 
-exemple du formatage : input-test.xlsx
+exemple du formatage : input.xlsx
 
 Utilisation py2exe
 ------------------
